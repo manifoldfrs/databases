@@ -14,9 +14,9 @@ CREATE TABLE roomnames (
 
 CREATE TABLE messages (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  message text,
-  created_at DATETIME,
-  updated_at DATETIME,
+  message text DEFAULT NULL,
+  created_at DATETIME DEFAULT NULL,
+  updated_at DATETIME DEFAULT NULL,
   username_id int,
   roomname_id int,
   FOREIGN KEY (username_id) REFERENCES usernames(id),
