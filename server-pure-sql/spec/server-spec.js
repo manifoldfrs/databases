@@ -65,4 +65,19 @@ describe("Persistent Node Chat Server", function() {
       done();
     });
   });
+
+  it('should respond to GET requests for /classes/messages with a 200 status code', function(done) {
+    request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+      expect(response.statusCode).to.equal(200);
+      done();
+    });
+  });
+
+  it('should send back an array', function(done) {
+    request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+      var parsedBody = JSON.parse(body);
+      expect(parsedBody).to.be.an('array');
+      done();
+    });
+  });
 });
