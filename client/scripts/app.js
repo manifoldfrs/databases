@@ -25,8 +25,8 @@ var app = {
     app.$roomSelect.on('change', app.handleRoomChange);
 
     // Fetch previous messages
-    app.startSpinner();
-    app.fetch(false);
+    //app.startSpinner();
+    //app.fetch(false);
 
     // Poll for new messages
     setInterval(function() {

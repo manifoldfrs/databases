@@ -15,8 +15,8 @@ var User = db.define('User', {
 });
 
 var Message = db.define('Message', {
-  userid: Sequelize.INTEGER,
-  text: Sequelize.STRING,
+  username_id: Sequelize.INTEGER,
+  message: Sequelize.STRING,
   roomname: Sequelize.STRING
 });
 
