@@ -1,4 +1,4 @@
-CREATE DATABASE chat;
+DROP DATABASE IF EXISTS chat;
 
 USE chat;
 
@@ -14,14 +14,17 @@ CREATE TABLE roomnames (
 
 CREATE TABLE messages (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  message text DEFAULT NULL,
-  created_at DATETIME DEFAULT NULL,
-  updated_at DATETIME DEFAULT NULL,
+  message text,
   username_id int,
   roomname_id int,
   FOREIGN KEY (username_id) REFERENCES usernames(id),
   FOREIGN KEY (roomname_id) REFERENCES roomnames(id)
 );
+
+insert into usernames (username) values ('Thanos'), ('Walter White');
+insert into roomnames (roomname) values ('Titan'), ('New Mexico');
+insert into messages (message, username_id, roomname_id) values ('This does put a smile on my face.', 1, 1), ('I am the one who knocks', 2, 2);
+
 
 
 /*  Execute this file from the command line by typing:
