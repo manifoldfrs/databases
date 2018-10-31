@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS chat;
+CREATE DATABASE chat;
 
 USE chat;
 
@@ -7,23 +7,16 @@ CREATE TABLE usernames (
   username VARCHAR(255)
 );
 
-CREATE TABLE roomnames (
-  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  roomname VARCHAR(255)
-);
-
 CREATE TABLE messages (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   message text,
+  roomname VARCHAR(255),
   username_id int,
-  roomname_id int,
-  FOREIGN KEY (username_id) REFERENCES usernames(id),
-  FOREIGN KEY (roomname_id) REFERENCES roomnames(id)
+  FOREIGN KEY (username_id) REFERENCES usernames(id)
 );
 
 insert into usernames (username) values ('Thanos'), ('Walter White');
-insert into roomnames (roomname) values ('Titan'), ('New Mexico');
-insert into messages (message, username_id, roomname_id) values ('This does put a smile on my face.', 1, 1), ('I am the one who knocks', 2, 2);
+insert into messages (message, roomname, username_id) values ('This does put a smile on my face.', 'Titan', 1), ('I am the one who knocks', 'New Mexico', 2);
 
 
 

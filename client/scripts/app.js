@@ -1,4 +1,3 @@
-
 var app = {
 
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
@@ -103,7 +102,7 @@ var app = {
       messages
         .filter(function(message) {
           return message.roomname === app.roomname ||
-                 app.roomname === 'lobby' && !message.roomname;
+                app.roomname === 'lobby' && !message.roomname;
         })
         .forEach(app.renderMessage);
     }
@@ -214,7 +213,7 @@ var app = {
   handleSubmit: function(event) {
     var message = {
       username: app.username,
-      text: app.$message.val(),
+      message: app.$message.val(),
       roomname: app.roomname || 'lobby'
     };
 

@@ -3,51 +3,78 @@ var db = require('../db');
 module.exports = {
   messages: {
     get: function (callback) {
-      let queryStr = 'select messages.message, usernames.username, roomnames.roomname from messages left outer join usernames on (messages.username_id = usernames.id) left outer join roomnames on (messages.roomname_id = roomnames.id) order by messages.id desc';
-      db.connection.query(queryStr, (err, data) => {
-        if (err) {
-          console.log('Unable to retrieve messages');
-        } else {
-          console.log('Data:', data);
-          callback(data);
-        }
-      });
-    }, // a function which produces all the messages
+        db.connection.query('SELECT messages.message, messages.roomname, usernames.username FROM messages inner join usernames on(messages.username_id=usernames.id);', function(error, results, fields){
+          if(error) {
+            console.log('Unable to retrieve messages');
+          } else {
+            var response = {results: results};
+            callback(null, JSON.stringify(response));
+
+          }
+        });
+    },
+    // a function which POSTs new messages to the database
     post: function (data, callback) {
-      let queryStr = 'insert into messages(message, roomname_id, username_id) values (?, (select roomnames.id from roomnames where roomnames.roomname = ? limit 1), (select usernames.id from usernames where usernames.username = ? limit 1))';
-      db.connection.query(queryStr, (err, result) => {
-      if (err) {
-        console.log('Unable to post message');
-        callback(err);
-      } else {
-        callback(result);
-      }
-    });
-    } // a function which can be used to insert a message into the database
+      data = JSON.parse(data);
+      //insert new row into messages table
+      var post = {
+        message: data.message,
+        roomname: data.roomname
+      };
+
+      module.exports.users.post(data.username, function(){
+        var queryString = "SELECT id FROM usernames WHERE username='"+ data.username +"';";
+        db.connection.query(queryString, function(err, res) {
+          if (err) {
+            throw err;
+          } else {
+            post.username_id = res[0].id;
+            db.connection.query('INSERT INTO messages SET ?', post, function(err, res){
+              if(err) {
+                console.log(err.message);
+                callback(err);
+              }
+              else {
+                callback(null, res);
+              }
+            });
+          }
+        });
+
+      });
+    }
   },
 
   users: {
     // Ditto as above.
     get: function (callback) {
-      let queryStr = 'select username from usernames';
-      db.connection.query(queryStr, (err, result) => {
-        if (err) {
-          console.log('Error retrieving usersnames');
+      // query the database for user table and get all users
+      db.connection.query('SELECT username FROM usernames', function(error, results, fields) {
+        if (error) {
+          console.log("Couldn't get users");
         } else {
-          callback(result);
+          // return callback with results
+          results = JSON.stringify(results);
+          callback(null, results);
         }
       });
     },
     post: function (data, callback) {
-      let queryStr = `insert into usernames (username) values ('${data.username}')`;
-      db.connection.query(queryStr, (err, result) => {
-        if (err) {
-          callback(err, null);
+      //check if username exists in table
+      db.connection.query("SELECT username FROM usernames WHERE username='"+data+"';", function(err, results, fields){
+        if(results.length === 0){
+          var username = {username: data};
+          db.connection.query('INSERT IGNORE INTO usernames SET ?', username, function(err, res){
+            if(err){
+              throw err;
+            } else {
+              callback();
+            }
+          });
         } else {
-          callback(err, result);
+          callback();
         }
       });
     }
   }
 };
-
